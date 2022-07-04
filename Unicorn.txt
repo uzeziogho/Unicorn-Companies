@@ -1,0 +1,36 @@
+myRDD=sc.textFile('/FileStore/tables/Unicorn_Companies.csv')
+myRDD1=myRDD.map(lambda s:s.split(','))
+myRDD2=myRDD1.map(lambda s:(s[5],s[4]))
+myRDD3=myRDD2.map(lambda s:(s,1))
+myRDD4=myRDD3.reduceByKey(lambda s1,s2:s1+s2)
+myRDD5=myRDD4.map(lambda k:(k[1],k[0])).sortByKey(ascending=False).map(lambda k:(k[1],k[0]))
+myRDD5.take(15)
+
+Out[84]: [(('United States', 'San Francisco'), 147),
+ (('United States', 'New York'), 101),
+ (('China', 'Beijing'), 60),
+ ((' & delivery"', ' logistics'), 57),
+ (('China', 'Shanghai'), 39),
+ (('United Kingdom', 'London'), 33),
+ (('India', 'Bengaluru'), 26),
+ (('France', 'Paris'), 19),
+ (('United States', 'Palo Alto'), 18),
+ (('China', 'Shenzhen'), 17),
+ (('United States', 'Mountain View'), 16),
+ (('China', 'Hangzhou'), 16),
+ (('Germany', 'Berlin'), 15),
+ (('United States', 'Boston'), 15),
+ (('United States', 'Chicago'), 14)]
+
+splitRDD=myRDD.map(lambda s:(s.split(",")))\
+    .map(lambda h:(h[9]).replace('"',''))
+parentRDD=splitRDD.map(lambda k:(k,1))
+nonpharmaRDD=parentRDD.reduceByKey(lambda k1,k2: k1+k2)
+noPharmaRDD=nonpharmaRDD.map(lambda k:(k[1],k[0])).sortByKey(ascending=False).map(lambda k:(k[1],k[0]))
+noPharmaRDD.take(5)
+
+Out[92]: [('Andreessen Horowitz', 28),
+ ('Sequoia Capital China', 28),
+ ('Accel', 27),
+ ('Insight Partners', 23),
+ ('Sequoia Capital', 16)]
